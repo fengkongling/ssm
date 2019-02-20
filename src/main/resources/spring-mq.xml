@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--组件扫描，需要添加pom依赖 spring-context -->
+    <!--<context:component-scan base-package="amqp" />-->
+
+    <!--配置连接-->
+    <rabbit:connection-factory id="connectionFactory" host="10.10.20.33" port="5672"
+                               username="admin" password="123456"  virtual-host="/" requested-heartbeat="60" />
+
+    <!--配置RabbitTemplate-->
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory"
+                     exchange="KXT_EMAIL" routing-key="KXT_EMAIL_QUEUE"/>
+
+    <!--配置RabbitAdmin-->
+    <rabbit:admin connection-factory="connectionFactory" />
+
+    <!--配置队列名-->
+    <rabbit:queue name="KXT_EMAIL_QUEUE" />
+
+    <!--配置topic类型exchange-->
+    <rabbit:topic-exchange name="KXT_EMAIL">
+        <rabbit:bindings>
+            <rabbit:binding queue="KXT_EMAIL_QUEUE" pattern="KXT_EMAIL_QUEUE" />
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+
+</beans>
